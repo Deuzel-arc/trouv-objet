@@ -31,6 +31,9 @@ jobs:
         uses: actions/upload-pages-artifact@v4
         with:
           path: .
+      # Allow the Actions artifact service to make the uploaded Pages archive visible to the deployment API.
+      - name: Wait for artifact availability
+        run: sleep 15
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
