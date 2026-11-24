@@ -6,3 +6,6 @@
 .offer-card{touch-action:pan-y;transition:transform .18s ease,opacity .18s ease;user-select:none}
 .offer-card.swiping{transition:none;cursor:grabbing}
 .offer-card .offer-actions{user-select:auto}
+
+.demo-tools{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 13px;padding:12px 14px;background:#fff;border:1px solid var(--line);border-radius:13px;color:var(--muted);font-size:12px}
+.button:disabled{opacity:.65;cursor:default}
