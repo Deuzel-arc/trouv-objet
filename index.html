@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#101827">
   <meta name="description" content="TROUV'OBJET — la seconde main à partir des recherches des acheteurs.">
   <title>TROUV'OBJET — La seconde main autrement</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="app.js" defer></script>
+  <link rel="stylesheet" href="styles.css?v=3">
+  <script src="app.js?v=3" defer></script>
 </head>
 <body>
   <header class="topbar">
@@ -21,9 +21,9 @@
       <p class="intro-copy">Publie ce que tu recherches. Les vendeurs intéressés construisent une offre adaptée à ton besoin.</p>
     </section>
     <nav class="tabs" aria-label="Navigation principale">
-      <button class="tab active" data-view="buyer">Acheteur</button>
-      <button class="tab" data-view="seller">Vendeur <span id="sellerCount" class="count">0</span></button>
-      <button class="tab" data-view="offers">Offres <span id="offerCount" class="count">0</span></button>
+      <button type="button" class="tab active" data-view="buyer">Acheteur</button>
+      <button type="button" class="tab" data-view="seller">Vendeur <span id="sellerCount" class="count">0</span></button>
+      <button type="button" class="tab" data-view="offers">Offres <span id="offerCount" class="count">0</span></button>
     </nav>
     <section id="buyerView" class="view active">
       <div class="section-heading"><div><p class="kicker">CÔTÉ ACHETEUR</p><h2>Qu'est-ce que tu recherches ?</h2></div><span class="step">01 / 03</span></div>
