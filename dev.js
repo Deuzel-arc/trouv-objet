@@ -13,10 +13,14 @@
     status.className = "status " + type;
     appState.textContent = ready ? "Application chargée" : "Chargement…";
   }
-  frame.addEventListener("load", () => {
-    ready = !!app();
-    setStatus(ready ? "Application de test chargée. Les données sont séparées de la démo publique." : "Impossible d'accéder à l'application intégrée.", ready ? "good" : "bad");
-  });
+  function inspectFrame() {
+    const doc = app();
+    ready = !!doc && doc.readyState === "complete";
+    setStatus(ready ? "Application de test chargée. Les données sont séparées de la démo publique." : "L'application intégrée n'a pas terminé son chargement. Utilise Recharger l'app.", ready ? "good" : "bad");
+  }
+  frame.addEventListener("load", inspectFrame);
+  // Le script différé peut s'exécuter après le chargement initial de l'iframe sur mobile.
+  if (frame.contentDocument && frame.contentDocument.readyState === "complete") inspectFrame();
 
   function report(items) {
     results.innerHTML = items.map(item =>
@@ -83,7 +87,7 @@
 
   document.getElementById("reloadApp").addEventListener("click", () => {
     ready = false;
-    frame.src = "index.html?dev=1&refresh=" + Date.now();
+    frame.src = "index.html?dev=1&build=4&refresh=" + Date.now();
     setStatus("Rechargement de l'application…");
   });
 
