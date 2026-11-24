@@ -1,6 +1,6 @@
 name: Deploy static site to GitHub Pages
 
-# Publish the root-level static prototype on every update to main.
+# Publish the static prototype from a fresh workflow run on every update to main.
 on:
   push:
     branches: [main]
