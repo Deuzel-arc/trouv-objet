@@ -6,7 +6,7 @@
 <style>
 :root{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#172033;background:#eef1f6}*{box-sizing:border-box}body{margin:0}.head{background:#111827;color:white;padding:18px max(18px,calc((100vw - 1440px)/2));display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}.head strong{letter-spacing:.06em}.head small{display:block;color:#aeb7c7;font-size:11px;margin-top:3px}.head a{color:#d8d4ff}.layout{max-width:1440px;margin:auto;padding:20px;display:grid;grid-template-columns:330px minmax(0,1fr);gap:18px}.side,.preview{background:white;border:1px solid #dfe4ec;border-radius:16px;overflow:hidden}.side{padding:18px;align-self:start}.eyebrow{font-size:10px;font-weight:850;letter-spacing:.14em;color:#6354df;margin:0 0 7px}.side h1{font-size:24px;line-height:1.1;margin:0 0 10px}.intro{font-size:13px;color:#657084;line-height:1.5}.actions{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.button{border:0;border-radius:9px;padding:10px 12px;font-weight:750;cursor:pointer;background:#efefff;color:#4d40c7}.button.dark{background:#5c4ce5;color:white}.status{padding:10px;border-radius:10px;background:#f3f5f8;font-size:12px;margin:10px 0}.status.good{background:#e7f7ef;color:#176744}.status.bad{background:#fff0ed;color:#9e3428}.tests{display:grid;gap:8px;margin-top:15px}.test{display:flex;gap:9px;align-items:flex-start;border:1px solid #e7eaf0;border-radius:10px;padding:10px;font-size:12px}.dot{width:19px;height:19px;flex:none;border-radius:50%;background:#e9edf3;display:grid;place-items:center;font-size:11px}.dot.ok{background:#dff4e8;color:#14683f}.dot.fail{background:#ffe5e1;color:#a42d21}.test b{display:block;font-size:12px}.test small{display:block;color:#697386;margin-top:3px}.preview-head{padding:12px 15px;border-bottom:1px solid #e7eaf0;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#657084}.preview iframe{width:100%;height:calc(100vh - 150px);min-height:680px;border:0;background:#f4f6f9}.foot{font-size:11px;color:#697386;line-height:1.5;margin-top:15px}@media(max-width:850px){.layout{grid-template-columns:1fr;padding:12px}.preview iframe{height:780px;min-height:0}.side h1{font-size:21px}}
 </style>
-<script src="dev.js" defer></script>
+<script src="dev.js?v=2" defer></script>
 </head>
 <body>
 <header class="head"><div><strong>TROUV'OBJET / DEV</strong><small>Environnement de développement · Données isolées</small></div><a href="./">Ouvrir la démo publique ↗</a></header>
@@ -21,7 +21,7 @@
 </aside>
 <section class="preview">
 <div class="preview-head"><span>APERÇU DE L'APPLICATION — MODE DEV</span><span id="appState">Initialisation…</span></div>
-<iframe id="appFrame" title="Application Trouv'Objet en mode développeur" src="index.html?dev=1"></iframe>
+<iframe id="appFrame" title="Application Trouv'Objet en mode développeur" src="index.html?dev=1&build=4"></iframe>
 </section>
 </main>
 </body></html>
