@@ -1,6 +1,6 @@
 (() => {
   const $ = (id) => document.getElementById(id);
-  const STORE = "trouvobjet-v1";
+  const STORE = "trouvobjet-demo-v2";
   const conditions = ["", "Correct", "Bon", "Très bon", "Neuf"];
   const demo = {
     inventory: [
@@ -19,8 +19,21 @@
   let pending = [];
   let currentPhoto = 0;
   let toastTimer;
-  function load(){try{const saved=JSON.parse(localStorage.getItem(STORE));return saved&&saved.inventory&&saved.requests&&saved.offers?saved:structuredClone(demo)}catch{return structuredClone(demo)}}
-  function save(){localStorage.setItem(STORE,JSON.stringify(state));render()}
+  const clone = value => JSON.parse(JSON.stringify(value));
+  function load(){
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORE));
+      if(saved && Array.isArray(saved.inventory) && Array.isArray(saved.requests) && Array.isArray(saved.offers)) {
+        return {...clone(demo), ...saved, interested: Array.isArray(saved.interested) ? saved.interested : []};
+      }
+    } catch {}
+    return {...clone(demo), interested:[]};
+  }
+  function save(){
+    try { localStorage.setItem(STORE,JSON.stringify(state)); }
+    catch { notify("Stockage plein : certaines photos sont peut-être trop volumineuses."); }
+    render();
+  }
   function escapeHTML(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
   function notify(msg){const el=$("toast");el.textContent=msg;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2600)}
   function switchView(name){document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.view===name));document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===name+"View"))}
@@ -34,9 +47,21 @@
     const requests=state.requests.filter(r=>state.inventory.some(i=>matches(i,r)));
     $("sellerRequests").innerHTML=requests.length?requests.map(r=>'<div class="request-item"><div class="request-copy"><b>'+escapeHTML(r.title)+'</b><small>Budget max '+r.budget+' € · '+escapeHTML(r.city)+' · État min. '+conditions[r.condition]+'</small></div><button class="button primary" data-reply="'+r.id+'">Proposer un prix</button></div>').join(""):'<div class="empty">Aucune demande correspondante pour le moment.</div>';
     document.querySelectorAll("[data-reply]").forEach(b=>b.addEventListener("click",()=>makeOffer(b.dataset.reply)));
-    $("offersList").innerHTML=state.offers.length?state.offers.map(o=>'<article class="offer-card" data-offer-card="'+o.id+'"><div class="offer-top"><b>'+escapeHTML(o.title)+'</b><span class="status-pill">'+(o.demo?"Exemple":"Proposition")+'</span></div><div class="offer-price">'+o.price+' €</div><p>'+conditions[o.condition]+' état déclaré · '+escapeHTML(o.city)+'<br>'+escapeHTML(o.details||"Détails à confirmer")+'</p><div class="offer-actions"><button class="button primary" data-interest="'+o.id+'">Ça m'intéresse</button><button class="button quiet" data-decline="'+o.id+'">Passer</button></div></article>').join(""):'<div class="panel empty">Aucune proposition pour le moment. Publie une recherche ou attends une réponse vendeur.</div>';
-    document.querySelectorAll("[data-interest]").forEach(b=>b.addEventListener("click",()=>notify("Intérêt noté dans cette démo. Aucun achat n'est engagé.")));
-    document.querySelectorAll("[data-decline]").forEach(b=>b.addEventListener("click",()=>{state.offers=state.offers.filter(o=>o.id!==b.dataset.decline);save();notify("Proposition masquée.")}));
+    const visibleOffers = state.offers.filter(o=>!o.dismissed);
+    $("offersList").innerHTML=visibleOffers.length?visibleOffers.map(o=>{
+      const interested=state.interested.includes(o.id);
+      return '<article class="offer-card" data-offer-card="'+o.id+'"><div class="offer-top"><b>'+escapeHTML(o.title)+'</b><span class="status-pill">'+(interested?"Intérêt envoyé":(o.demo?"Exemple":"Proposition"))+'</span></div><div class="offer-price">'+o.price+' €</div><p>'+conditions[o.condition]+' état déclaré · '+escapeHTML(o.city)+'<br>'+escapeHTML(o.details||"Détails à confirmer")+'</p><div class="offer-actions"><button class="button primary" data-interest="'+o.id+'" '+(interested?'disabled':'')+'>'+(interested?"Intérêt envoyé":"Ça m'intéresse")+'</button><button class="button quiet" data-decline="'+o.id+'">Passer</button></div></article>';
+    }).join(""):'<div class="panel empty">Aucune proposition à afficher. Tu peux réinitialiser les données de test pour recommencer.</div>';
+    document.querySelectorAll("[data-interest]").forEach(b=>b.addEventListener("click",()=>{
+      if(!state.interested.includes(b.dataset.interest)) state.interested.push(b.dataset.interest);
+      save();notify("Intérêt enregistré dans la démo. Aucun achat ni contact réel.");
+    }));
+    document.querySelectorAll("[data-decline]").forEach(b=>b.addEventListener("click",()=>{
+      if(!confirm("Masquer cette proposition ?")) return;
+      const offer=state.offers.find(o=>o.id===b.dataset.decline);
+      if(offer) offer.dismissed=true;
+      save();notify("Proposition masquée. Tu peux réinitialiser la démo pour la retrouver.");
+    }));
     // Glisser une carte : droite = intéressé, gauche = passer. Les boutons restent accessibles.
     document.querySelectorAll("[data-offer-card]").forEach(card=>{
       let startX=0,startY=0,dragging=false;
@@ -55,14 +80,28 @@
         card.style.transform="";card.style.opacity="";
         if(Math.abs(dx)>95){
           const id=card.dataset.offerCard;
-          if(dx>0)notify("Intérêt noté dans cette démo. Aucun achat n'est engagé.");
-          else {state.offers=state.offers.filter(o=>o.id!==id);save();notify("Proposition passée.");}
+          if(dx>0){
+            if(!state.interested.includes(id)) state.interested.push(id);
+            save();notify("Intérêt enregistré. Aucun achat n'est engagé.");
+          } else if(confirm("Masquer cette proposition ?")){
+            const offer=state.offers.find(o=>o.id===id);
+            if(offer) offer.dismissed=true;
+            save();notify("Proposition masquée.");
+          }
         }
       };
       card.addEventListener("pointerup",finish);card.addEventListener("pointercancel",()=>{dragging=false;card.classList.remove("swiping");card.style.transform="";card.style.opacity="";});
     });
   }
-  function matches(item,request){const title=item.title.toLowerCase(),wanted=request.title.toLowerCase();return (title.includes(wanted)||wanted.includes(title))&&(!item.price||item.price<=request.budget)&&item.condition>=request.condition}
+  function matches(item,request){
+    const title=String(item.title||"").toLocaleLowerCase("fr");
+    const wanted=String(request.title||"").toLocaleLowerCase("fr");
+    const sameCity=!item.city||!request.city||item.city.toLocaleLowerCase("fr")===request.city.toLocaleLowerCase("fr")||item.city==="À préciser";
+    const deliveryOk=request.delivery==="either"||item.delivery==="either"||item.delivery===request.delivery;
+    return (title.includes(wanted)||wanted.includes(title)) &&
+      (!item.price||item.price<=request.budget) &&
+      Number(item.condition)>=Number(request.condition) && sameCity && deliveryOk;
+  }
   $("requestForm").addEventListener("submit",e=>{
     e.preventDefault();
     const request={id:"r-"+Date.now(),title:$("requestName").value.trim(),budget:Number($("requestBudget").value),condition:Number($("requestCondition").value),city:$("requestCity").value.trim(),delivery:$("requestDelivery").value};
@@ -104,5 +143,12 @@
     state.offers.unshift({id:"o-"+Date.now(),title:item.title,price,condition:item.condition,city:item.city||req.city,details,requestId});
     save();switchView("offers");notify("Ta proposition a été ajoutée à la démo.");
   }
+  const resetButton=$("resetDemo");
+  if(resetButton) resetButton.addEventListener("click",()=>{
+    if(!confirm("Réinitialiser la démo ? Tes recherches, objets et propositions de test seront effacés.")) return;
+    state={...clone(demo),interested:[]};
+    try { localStorage.removeItem(STORE); } catch {}
+    save();$("requestResult").hidden=true;notify("Démo réinitialisée avec les exemples.");
+  });
   render();
 })();
