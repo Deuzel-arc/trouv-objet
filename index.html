@@ -1,44 +1,69 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#111827"><title>TROUV'OBJET</title>
-<style>
-:root{--bg:#f4f5f7;--ink:#172033;--muted:#667085;--line:#e7e9ee;--brand:#6757e8;--green:#16865b;--card:#fff}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select{font:inherit}header{background:#111827;color:#fff;padding:22px 18px 18px}header small{color:#c4c8d3;letter-spacing:.12em;font-weight:700}h1{margin:5px 0 2px;font-size:26px;letter-spacing:-.04em}header p{margin:0;color:#c4c8d3;font-size:13px}.wrap{max-width:720px;margin:auto;padding:16px 14px 92px}.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;background:#e8e9ef;padding:5px;border-radius:14px;position:sticky;top:8px;z-index:3}.tabs button{border:0;background:transparent;padding:11px 4px;border-radius:10px;font-weight:700;color:#596174}.tabs button.active{background:#fff;color:var(--brand);box-shadow:0 1px 5px #17203314}.panel{display:none;margin-top:16px}.panel.active{display:block}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:17px;margin-bottom:13px;box-shadow:0 4px 18px #17203308}.eyebrow{font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--brand);text-transform:uppercase}.card h2{font-size:20px;margin:5px 0 8px;letter-spacing:-.025em}.muted{color:var(--muted)}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.btn{border:0;border-radius:12px;padding:12px 15px;background:var(--brand);color:#fff;font-weight:750;cursor:pointer}.btn.secondary{background:#f0efff;color:var(--brand)}.btn.light{background:#f1f3f6;color:#374151}.btn.green{background:var(--green)}.btn:disabled{opacity:.45}label{display:block;font-weight:700;font-size:13px;margin:12px 0 5px}input,select{width:100%;border:1px solid #d9dce5;border-radius:11px;padding:12px;background:white;color:var(--ink)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.object{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--line)}.thumb{width:58px;height:58px;border-radius:13px;background:#f0efff;display:grid;place-items:center;font-size:28px;flex:none}.object strong{display:block}.pill{font-size:11px;background:#eef8f3;color:#14744e;padding:4px 8px;border-radius:20px;font-weight:800}.offer{border:1px solid var(--line);border-radius:15px;padding:14px;margin-top:10px}.price{font-size:24px;font-weight:850;letter-spacing:-.04em}.offer h3{margin:0 0 4px}.notice{font-size:12px;color:var(--muted);margin-top:12px}.empty{padding:20px;text-align:center;color:var(--muted)}.status{margin-top:10px;font-size:13px;color:var(--green);font-weight:700}footer{text-align:center;color:#98a0ad;font-size:11px;padding:10px}
-@media(max-width:420px){.grid{grid-template-columns:1fr}.tabs button{font-size:12px}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="TROUV'OBJET — la seconde main à partir des recherches des acheteurs.">
+  <title>TROUV'OBJET — La seconde main autrement</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
 </head>
 <body>
-<header><small>LA SECONDE MAIN, AUTREMENT</small><h1>TROUV'OBJET</h1><p>Tu cherches. Les vendeurs te proposent. Tu décides.</p></header>
-<main class="wrap">
-<nav class="tabs"><button class="active" data-tab="vendeur">Vendeur</button><button data-tab="acheteur">Acheteur</button><button data-tab="offres">Offres</button></nav>
-<section id="vendeur" class="panel active">
-<div class="card"><div class="eyebrow">Espace vendeur</div><h2>Ajoute tes objets en quelques secondes</h2><p class="muted">Sélectionne plusieurs photos. Cette première version te montre le parcours de validation ; la reconnaissance automatique sera intégrée dans une prochaine étape.</p><label for="photos">Choisir des photos</label><input id="photos" type="file" accept="image/*" multiple><div class="row" style="margin-top:12px"><button class="btn" id="analyze">Préparer mes objets</button><span class="muted" id="count">Aucune photo sélectionnée</span></div><div id="preview"></div><p class="notice">Les photos restent dans cette démonstration : elles ne sont envoyées sur aucun serveur.</p></div>
-<div class="card"><div class="eyebrow">Exemple de fiches préparées</div><div id="items"><div class="object"><div class="thumb">☕</div><div><strong>Cafetière</strong><span class="muted">État à confirmer · Catégorie maison</span></div><span class="pill">À valider</span></div><div class="object"><div class="thumb">🎮</div><div><strong>Manette PS5</strong><span class="muted">État à confirmer · Jeux vidéo</span></div><span class="pill">À valider</span></div><div class="object"><div class="thumb">📚</div><div><strong>Lot de livres</strong><span class="muted">État à confirmer · Culture</span></div><span class="pill">À valider</span></div></div><button class="btn secondary" id="validate">Valider les fiches exemple</button><div class="status" id="sellerStatus"></div></div>
-</section>
-<section id="acheteur" class="panel">
-<div class="card"><div class="eyebrow">Espace acheteur</div><h2>Décris ce que tu recherches</h2><p class="muted">Plus ta demande est précise, plus les propositions peuvent être pertinentes.</p>
-<label>Objet recherché</label><input id="item" value="PlayStation 5" placeholder="Ex. PlayStation 5">
-<div class="grid"><div><label>Budget maximum (€)</label><input id="budget" type="number" value="300" min="0"></div><div><label>État minimum</label><select id="condition"><option>Correct</option><option>Bon</option><option>Très bon</option><option>Neuf</option></select></div></div>
-<label>Ville ou secteur</label><input id="city" value="Montpellier" placeholder="Ta ville">
-<label>Réception souhaitée</label><select id="delivery"><option>Livraison ou remise en main propre</option><option>Remise en main propre</option><option>Livraison</option></select>
-<button class="btn" id="publish" style="width:100%;margin-top:16px">Publier ma recherche</button><div class="status" id="buyerStatus"></div></div>
-</section>
-<section id="offres" class="panel">
-<div class="card"><div class="eyebrow">Comparateur d'offres</div><h2>Des propositions à comparer</h2><p class="muted">Exemple fictif pour une PS5. L'intérêt n'engage pas à acheter : tu gardes toujours la décision finale.</p>
-<div class="offer"><div class="row" style="justify-content:space-between"><h3>PS5 + une manette</h3><span class="pill">Retrait</span></div><div class="price">280 €</div><p class="muted">Bon état déclaré · Montpellier · Remise en main propre</p><button class="btn secondary interest">Ça m'intéresse</button></div>
-<div class="offer"><div class="row" style="justify-content:space-between"><h3>PS5 + un jeu</h3><span class="pill">Livraison</span></div><div class="price">295 €</div><p class="muted">Très bon état déclaré · Livraison incluse</p><button class="btn secondary interest">Ça m'intéresse</button></div>
-<div class="offer"><div class="row" style="justify-content:space-between"><h3>PS5 seule</h3><span class="pill">À 15 km</span></div><div class="price">245 €</div><p class="muted">État correct déclaré · Retrait à proximité</p><button class="btn secondary interest">Ça m'intéresse</button></div>
-<div class="status" id="offerStatus"></div><p class="notice">Aucune offre réelle, transaction ou prise de contact n'est effectuée dans cette maquette.</p></div>
-</section>
-<footer>Prototype de travail · Données fictives · Aucune transaction réelle</footer>
-</main>
-<script>
-document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===b.dataset.tab))}));
-const photos=document.getElementById('photos');photos.addEventListener('change',()=>{document.getElementById('count').textContent=photos.files.length+' photo(s) sélectionnée(s)';document.getElementById('preview').innerHTML=Array.from(photos.files).slice(0,8).map(f=>'<div class="object"><div class="thumb">🖼️</div><div><strong>'+f.name.replace(/[&<>"]/g,'')+'</strong><span class="muted">Photo importée localement</span></div></div>').join('')});
-document.getElementById('analyze').onclick=()=>{const n=photos.files.length;document.getElementById('sellerStatus').textContent=n?' '+n+' photo(s) prêtes pour une future analyse IA. Pour le moment, vérifie les fiches exemple ci-dessus.':'Choisis d’abord une ou plusieurs photos.'};
-document.getElementById('validate').onclick=()=>document.getElementById('sellerStatus').textContent='Fiches exemple validées dans cette démonstration.';
-document.getElementById('publish').onclick=()=>{const item=document.getElementById('item').value.trim(),budget=document.getElementById('budget').value,city=document.getElementById('city').value.trim();document.getElementById('buyerStatus').textContent=item&&budget&&city?'Demande préparée : '+item+' · '+budget+' € max · '+city+'. Publication simulée, aucun vendeur réel n’est contacté.':'Complète l’objet, le budget et la ville.'};
-document.querySelectorAll('.interest').forEach(b=>b.onclick=()=>{document.getElementById('offerStatus').textContent='Intérêt enregistré dans cette démonstration uniquement. Aucun achat n’est engagé.'});
-</script></body></html>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="TROUV'OBJET accueil"><span class="brand-mark">T</span><span>TROUV'OBJET<small>LA SECONDE MAIN AUTREMENT</small></span></a>
+    <span class="prototype-tag">BÊTA · DÉMO</span>
+  </header>
+  <main class="shell">
+    <section class="intro">
+      <p class="kicker">ACHAT ET VENTE SIMPLIFIÉS</p>
+      <h1>Tu cherches.<br><em>Ils te proposent.</em></h1>
+      <p class="intro-copy">Publie ce que tu recherches. Les vendeurs intéressés construisent une offre adaptée à ton besoin.</p>
+    </section>
+    <nav class="tabs" aria-label="Navigation principale">
+      <button class="tab active" data-view="buyer">Acheteur</button>
+      <button class="tab" data-view="seller">Vendeur <span id="sellerCount" class="count">0</span></button>
+      <button class="tab" data-view="offers">Offres <span id="offerCount" class="count">0</span></button>
+    </nav>
+    <section id="buyerView" class="view active">
+      <div class="section-heading"><div><p class="kicker">CÔTÉ ACHETEUR</p><h2>Qu'est-ce que tu recherches ?</h2></div><span class="step">01 / 03</span></div>
+      <form id="requestForm" class="panel">
+        <label for="requestName">Objet recherché</label><input id="requestName" required value="PlayStation 5" placeholder="Ex. vélo électrique">
+        <div class="two-col">
+          <div><label for="requestBudget">Budget maximum</label><div class="input-suffix"><input id="requestBudget" type="number" min="1" required value="300"><span>€</span></div></div>
+          <div><label for="requestCondition">État minimum</label><select id="requestCondition"><option value="1">Correct</option><option value="2" selected>Bon</option><option value="3">Très bon</option><option value="4">Neuf</option></select></div>
+        </div>
+        <label for="requestCity">Ville / secteur</label><input id="requestCity" required value="Montpellier" placeholder="Ex. Montpellier">
+        <label for="requestDelivery">Réception souhaitée</label><select id="requestDelivery"><option value="either">Livraison ou remise en main propre</option><option value="pickup">Remise en main propre</option><option value="shipping">Livraison</option></select>
+        <button class="button primary full" type="submit">Publier ma recherche <span>→</span></button>
+        <p class="fineprint">Démo locale : ta recherche reste dans ce navigateur. Aucun vendeur réel n'est contacté.</p>
+      </form>
+      <div id="requestResult" class="result-panel" hidden></div>
+      <div class="panel how-panel"><p class="kicker">LE PRINCIPE</p><div class="how-row"><span>1</span><p><b>Tu décris ton besoin</b><small>Objet, budget, état et zone.</small></p></div><div class="how-row"><span>2</span><p><b>Les vendeurs répondent</b><small>Ils adaptent leur prix et leur proposition.</small></p></div><div class="how-row"><span>3</span><p><b>Tu compares librement</b><small>Rien n'est acheté sans confirmation.</small></p></div></div>
+    </section>
+    <section id="sellerView" class="view">
+      <div class="section-heading"><div><p class="kicker">CÔTÉ VENDEUR</p><h2>Ajoute plusieurs objets d'un coup.</h2></div><span class="step">02 / 03</span></div>
+      <div class="panel">
+        <p class="muted">Sélectionne les photos des objets que tu souhaites vendre. Tu n'as pas à inventorier toute ta maison.</p>
+        <label class="upload-zone" for="photoInput"><span class="upload-icon">＋</span><b>Choisir des photos</b><small>Plusieurs images à la fois · JPG, PNG, WebP</small><input id="photoInput" type="file" accept="image/*" multiple></label>
+        <div id="photoQueue" class="photo-queue"></div>
+        <div id="photoEditor" class="photo-editor" hidden>
+          <div class="editor-head"><div><p class="kicker">FICHE À CONFIRMER</p><h3 id="photoFileName">Nouvel objet</h3></div><span class="ai-label">ASSISTANCE</span></div>
+          <img id="photoLarge" class="photo-large" alt="Aperçu de l'objet sélectionné">
+          <label for="productTitle">Nom de l'objet</label><input id="productTitle" placeholder="Ex. Cafetière expresso">
+          <div class="two-col"><div><label for="productCondition">État constaté</label><select id="productCondition"><option value="1">Correct</option><option value="2" selected>Bon</option><option value="3">Très bon</option><option value="4">Neuf</option></select></div><div><label for="productPrice">Prix souhaité (€)</label><input id="productPrice" type="number" min="0" placeholder="Facultatif"></div></div>
+          <div class="row-actions"><button id="skipPhoto" class="button quiet" type="button">Ignorer</button><button id="confirmPhoto" class="button primary" type="button">Valider cet objet</button></div>
+        </div>
+      </div>
+      <div class="panel"><div class="panel-title"><div><p class="kicker">MES OBJETS</p><h3>Objets proposés</h3></div><span id="inventoryCount" class="soft-count">0 objet</span></div><div id="inventoryList" class="inventory-list"></div></div>
+      <div class="panel"><p class="kicker">DEMANDES COMPATIBLES</p><h3>Les acheteurs qui recherchent tes objets</h3><div id="sellerRequests" class="request-list"></div></div>
+    </section>
+    <section id="offersView" class="view">
+      <div class="section-heading"><div><p class="kicker">COMPARAISON</p><h2>Les propositions reçues.</h2></div><span class="step">03 / 03</span></div>
+      <div id="offersList" class="offer-list"></div>
+    </section>
+    <footer><span>TROUV'OBJET</span><span>Prototype évolutif · Données de démonstration</span></footer>
+  </main>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
