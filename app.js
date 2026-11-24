@@ -37,6 +37,30 @@
     $("offersList").innerHTML=state.offers.length?state.offers.map(o=>'<article class="offer-card"><div class="offer-top"><b>'+escapeHTML(o.title)+'</b><span class="status-pill">'+(o.demo?"Exemple":"Proposition")+'</span></div><div class="offer-price">'+o.price+' €</div><p>'+conditions[o.condition]+' état déclaré · '+escapeHTML(o.city)+'<br>'+escapeHTML(o.details||"Détails à confirmer")+'</p><div class="offer-actions"><button class="button primary" data-interest="'+o.id+'">Ça m'intéresse</button><button class="button quiet" data-decline="'+o.id+'">Passer</button></div></article>').join(""):'<div class="panel empty">Aucune proposition pour le moment. Publie une recherche ou attends une réponse vendeur.</div>';
     document.querySelectorAll("[data-interest]").forEach(b=>b.addEventListener("click",()=>notify("Intérêt noté dans cette démo. Aucun achat n'est engagé.")));
     document.querySelectorAll("[data-decline]").forEach(b=>b.addEventListener("click",()=>{state.offers=state.offers.filter(o=>o.id!==b.dataset.decline);save();notify("Proposition masquée.")}));
+    // Glisser une carte : droite = intéressé, gauche = passer. Les boutons restent accessibles.
+    document.querySelectorAll("[data-offer-card]").forEach(card=>{
+      let startX=0,startY=0,dragging=false;
+      card.addEventListener("pointerdown",e=>{
+        if(e.target.closest("button"))return;
+        startX=e.clientX;startY=e.clientY;dragging=true;card.setPointerCapture(e.pointerId);card.classList.add("swiping");
+      });
+      card.addEventListener("pointermove",e=>{
+        if(!dragging)return;
+        const dx=e.clientX-startX,dy=e.clientY-startY;
+        if(Math.abs(dx)>Math.abs(dy)){card.style.transform="translateX("+dx+"px) rotate("+(dx/24)+"deg)";card.style.opacity=String(Math.max(.55,1-Math.abs(dx)/360));}
+      });
+      const finish=e=>{
+        if(!dragging)return;dragging=false;card.classList.remove("swiping");
+        const dx=e.clientX-startX;
+        card.style.transform="";card.style.opacity="";
+        if(Math.abs(dx)>95){
+          const id=card.dataset.offerCard;
+          if(dx>0)notify("Intérêt noté dans cette démo. Aucun achat n'est engagé.");
+          else {state.offers=state.offers.filter(o=>o.id!==id);save();notify("Proposition passée.");}
+        }
+      };
+      card.addEventListener("pointerup",finish);card.addEventListener("pointercancel",()=>{dragging=false;card.classList.remove("swiping");card.style.transform="";card.style.opacity="";});
+    });
   }
   function matches(item,request){const title=item.title.toLowerCase(),wanted=request.title.toLowerCase();return (title.includes(wanted)||wanted.includes(title))&&(!item.price||item.price<=request.budget)&&item.condition>=request.condition}
   $("requestForm").addEventListener("submit",e=>{
