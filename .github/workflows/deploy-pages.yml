@@ -1,5 +1,6 @@
 name: Deploy static site to GitHub Pages
 
+# Publish the root-level static prototype on every update to main.
 on:
   push:
     branches: [main]
