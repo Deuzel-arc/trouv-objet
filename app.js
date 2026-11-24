@@ -1,6 +1,6 @@
 (() => {
   const $ = (id) => document.getElementById(id);
-  const STORE = "trouvobjet-demo-v2";
+  const STORE = new URLSearchParams(location.search).has("dev") ? "trouvobjet-dev-v1" : "trouvobjet-demo-v2";
   const conditions = ["", "Correct", "Bon", "Très bon", "Neuf"];
   const demo = {
     inventory: [
